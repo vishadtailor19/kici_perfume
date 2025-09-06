@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const { testConnection, syncDatabase } = require('./models');
+const { sequelize, syncDatabase } = require('./models');
 require('dotenv').config();
 
 // Import routes
@@ -36,8 +36,13 @@ app.use(express.urlencoded({ extended: true }));
 
 // Database connection and sync
 const initializeDatabase = async () => {
-  await testConnection();
-  await syncDatabase(false); // Set to true to force recreate tables
+  try {
+    await sequelize.authenticate();
+    console.log('✅ Database connection has been established successfully.');
+    await syncDatabase(false); // Set to true to force recreate tables
+  } catch (error) {
+    console.error('❌ Unable to connect to the database:', error);
+  }
 };
 
 initializeDatabase();
