@@ -1,157 +1,162 @@
-# Kici Perfume - Full-Stack E-commerce Platform
+# 🌸 Kici Perfume - E-commerce Platform
 
-A modern, full-stack e-commerce platform for premium perfumes built with React, Node.js, Express, and MongoDB.
+A comprehensive perfume e-commerce platform built with React, Node.js, and SQLite. Features advanced perfume-specific functionality including fragrance notes, reviews, and personalized recommendations.
 
-## 🌟 Features
+## 🚀 Features
 
-### Frontend (User Side)
-- **Modern UI**: Clean, responsive design with TailwindCSS
-- **Product Catalog**: Browse perfumes with search, filter, and sort functionality
-- **Product Details**: Detailed product pages with images and fragrance notes
-- **Shopping Cart**: Add/remove items, quantity management, checkout flow
-- **User Authentication**: Secure signup/login with JWT tokens
-- **User Profile**: Manage personal information and view order history
+### 🛍️ E-commerce Core
+- **Product Catalog** - Browse perfumes by category, brand, or fragrance family
+- **Advanced Search** - Filter by price, concentration, gender, season, and occasion
+- **Shopping Cart** - Persistent cart with automatic expiration
+- **Wishlist** - Save favorite products with personal notes
+- **User Reviews** - Detailed reviews with fragrance performance ratings
+- **Order Management** - Complete order tracking and history
 
-### Admin Panel
-- **Dashboard**: Key metrics and analytics overview
-- **Product Management**: Add, edit, delete perfumes with image uploads
-- **Order Management**: View and update order status, tracking
-- **User Management**: View users, manage roles and permissions
-- **Role-based Access**: Secure admin-only functionality
+### 🌺 Perfume-Specific Features
+- **Fragrance Notes** - Detailed top, heart, and base note information
+- **Concentration Types** - Parfum, EDP, EDT, EDC, Eau Fraiche
+- **Perfumer Information** - Track renowned fragrance creators
+- **Seasonal Recommendations** - Suggest perfumes based on season and occasion
+- **Longevity & Sillage Ratings** - Performance metrics for each fragrance
+- **Gender Targeting** - Men's, Women's, and Unisex categories
 
-### Backend API
-- **RESTful APIs**: Well-structured endpoints for all operations
-- **Authentication**: JWT-based auth with role-based access control
-- **Data Validation**: Input validation and sanitization
-- **Security**: Helmet, CORS, rate limiting, password hashing
-- **Database**: MongoDB with Mongoose ODM
+### 👤 User Experience
+- **User Authentication** - Secure login/registration with JWT
+- **Profile Management** - Personal preferences and fragrance history
+- **Loyalty Points** - Reward system for repeat customers
+- **Multiple Addresses** - Shipping and billing address management
+- **Newsletter Subscription** - Stay updated with new releases
 
-## 🛠️ Tech Stack
+### 🛡️ Admin Features
+- **Product Management** - Add, edit, and manage perfume inventory
+- **Order Processing** - Track and update order status
+- **User Management** - Customer support and account management
+- **Analytics Dashboard** - Sales and performance metrics
+- **Coupon System** - Create and manage discount codes
+
+## 🏗️ Technical Architecture
 
 ### Frontend
-- **React 18** - Modern React with hooks
-- **TailwindCSS** - Utility-first CSS framework
-- **Vite** - Fast build tool and dev server
+- **React 18** - Modern React with hooks and context
+- **Vite** - Fast build tool and development server
+- **Tailwind CSS** - Utility-first CSS framework
+- **TypeScript** - Type-safe admin panel
 
 ### Backend
-- **Node.js** - JavaScript runtime
-- **Express.js** - Web framework
-- **MongoDB** - NoSQL database
-- **Mongoose** - ODM for MongoDB
-- **JWT** - JSON Web Tokens for authentication
-- **bcryptjs** - Password hashing
+- **Node.js & Express** - RESTful API server
+- **Sequelize ORM** - Database management and migrations
+- **SQLite** - Local database for development
+- **JWT Authentication** - Secure token-based auth
+- **bcrypt** - Password hashing and security
 
-### Security & Validation
-- **Helmet** - Security headers
-- **CORS** - Cross-origin resource sharing
-- **express-validator** - Input validation
-- **express-rate-limit** - Rate limiting
+### Database Schema
+- **16 Interconnected Tables** - Comprehensive data model
+- **Foreign Key Constraints** - Data integrity enforcement
+- **Indexes** - Optimized query performance
+- **JSON Fields** - Flexible data storage for arrays and objects
+
+## 📊 Database Structure
+
+```
+Users ──┬── Orders ──── Order Items ──── Products
+        ├── Reviews ─────────────────────┘
+        ├── Addresses
+        ├── Cart ──── Cart Items ────────┘
+        └── Wishlist ───────────────────┘
+
+Products ──┬── Product Images
+           ├── Product Fragrance Notes ── Fragrance Notes
+           ├── Categories (hierarchical)
+           └── Brands
+
+Orders ──── Coupons
+```
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js (v16 or higher)
-- MongoDB (local or cloud instance)
-- npm or pnpm
+- Node.js 18+ 
+- npm or yarn
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd kici-perfume
+   git clone https://github.com/vishadtailor19/kici_perfume.git
+   cd kici_perfume
    ```
 
-2. **Install Frontend Dependencies**
+2. **Install dependencies**
    ```bash
-   pnpm install
-   ```
-
-3. **Install Backend Dependencies**
-   ```bash
+   # Install frontend dependencies
+   npm install
+   
+   # Install backend dependencies
    cd backend
    npm install
    ```
 
-4. **Environment Setup**
+3. **Set up the database**
    ```bash
-   # In backend directory
-   cp .env.example .env
-   
-   # Edit .env with your configuration:
-   MONGODB_URI=mongodb://localhost:27017/kici-perfume
-   JWT_SECRET=your-super-secret-jwt-key-here
-   PORT=5000
-   NODE_ENV=development
-   CORS_ORIGIN=http://localhost:3000
+   # Seed the database with sample data
+   npm run seed-db
    ```
 
-5. **Seed the Database**
+4. **Start the development servers**
    ```bash
-   # In backend directory
-   npm run seed
-   ```
-
-6. **Start the Development Servers**
-   
-   **Backend** (Terminal 1):
-   ```bash
+   # Start backend server (Terminal 1)
    cd backend
    npm run dev
-   ```
    
-   **Frontend** (Terminal 2):
-   ```bash
-   # In root directory
-   pnpm run dev
+   # Start frontend server (Terminal 2)
+   cd ..
+   npm run dev
+   
+   # Start admin panel (Terminal 3)
+   cd admin-panel
+   npm run dev
    ```
 
-7. **Access the Application**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:5000/api
+5. **Access the applications**
+   - **Frontend**: http://localhost:5173
+   - **Backend API**: http://localhost:5000/api
+   - **Admin Panel**: http://localhost:3001
 
-## 👤 Demo Accounts
+## 🔐 Default Credentials
 
-After running the seed script, you can use these accounts:
+### Admin User
+- **Email**: admin@kici-perfume.com
+- **Password**: admin123
 
-- **Admin**: admin@kici.com / password123
-- **User**: john@example.com / password123
-- **User**: jane@example.com / password123
+### Sample Customer
+- **Email**: john@example.com
+- **Password**: password123
 
 ## 📁 Project Structure
 
 ```
-kici-perfume/
-├── src/                          # Frontend React app
-│   ├── components/
-│   │   └── Layout.jsx           # Header, navigation, footer
-│   ├── pages/
-│   │   ├── HomePage.jsx         # Landing page
-│   │   ├── ProductsPage.jsx     # Product catalog
-│   │   ├── ProductDetailPage.jsx # Product details
-│   │   ├── CartPage.jsx         # Shopping cart
-│   │   ├── AuthPage.jsx         # Login/signup
-│   │   └── AdminPanel.jsx       # Admin dashboard
-│   └── App.jsx                  # Main app component
-├── backend/                      # Backend API
-│   ├── models/                  # MongoDB schemas
-│   │   ├── User.js
-│   │   ├── Product.js
-│   │   └── Order.js
-│   ├── routes/                  # API routes
-│   │   ├── auth.js
-│   │   ├── products.js
-│   │   ├── orders.js
-│   │   └── users.js
-│   ├── middleware/
-│   │   └── auth.js              # JWT authentication
-│   ├── scripts/
-│   │   └── seed.js              # Database seeding
-│   └── server.js                # Express server
-└── README.md
+kici_perfume/
+├── src/                    # Frontend React app
+│   ├── components/         # Reusable UI components
+│   ├── pages/             # Page components
+│   └── App.jsx            # Main app component
+├── backend/               # Node.js API server
+│   ├── config/           # Database configuration
+│   ├── models/           # Sequelize models
+│   ├── routes/           # API routes
+│   ├── middleware/       # Custom middleware
+│   ├── scripts/          # Database seeding
+│   └── server.js         # Express server
+├── admin-panel/          # TypeScript admin interface
+│   ├── src/
+│   │   ├── components/   # Admin UI components
+│   │   ├── pages/        # Admin pages
+│   │   └── services/     # API services
+└── public/               # Static assets
+    └── images/           # Product images
 ```
 
-## 🔧 API Endpoints
+## 🛠️ API Endpoints
 
 ### Authentication
 - `POST /api/auth/register` - User registration
@@ -160,87 +165,101 @@ kici-perfume/
 - `PUT /api/auth/profile` - Update profile
 
 ### Products
-- `GET /api/products` - Get all products (with filters)
-- `GET /api/products/:id` - Get single product
-- `POST /api/products` - Create product (Admin)
-- `PUT /api/products/:id` - Update product (Admin)
-- `DELETE /api/products/:id` - Delete product (Admin)
+- `GET /api/products` - Get all products
+- `GET /api/products/:id` - Get product by ID
+- `POST /api/products` - Create product (admin)
+- `PUT /api/products/:id` - Update product (admin)
+- `DELETE /api/products/:id` - Delete product (admin)
 
 ### Orders
-- `POST /api/orders` - Create order
 - `GET /api/orders` - Get user orders
-- `GET /api/orders/:id` - Get single order
-- `PUT /api/orders/:id/status` - Update order status (Admin)
-- `GET /api/orders/admin/all` - Get all orders (Admin)
+- `POST /api/orders` - Create new order
+- `GET /api/orders/:id` - Get order details
+- `PUT /api/orders/:id` - Update order status (admin)
 
-### Users
-- `GET /api/users` - Get all users (Admin)
-- `GET /api/users/:id` - Get user by ID (Admin)
-- `PUT /api/users/:id/role` - Update user role (Admin)
-- `PUT /api/users/:id/status` - Activate/deactivate user (Admin)
+### Users (Admin)
+- `GET /api/users` - Get all users
+- `GET /api/users/:id` - Get user by ID
+- `PUT /api/users/:id` - Update user
+- `DELETE /api/users/:id` - Delete user
 
-## 🔒 Security Features
+## 🎨 Sample Data
 
-- **Password Hashing**: bcryptjs with salt rounds
-- **JWT Authentication**: Secure token-based auth
-- **Input Validation**: express-validator for all inputs
-- **Rate Limiting**: Prevent API abuse
-- **CORS Protection**: Configured for frontend domain
-- **Security Headers**: Helmet.js for security headers
-- **Role-based Access**: Admin/user role separation
+The database comes pre-populated with:
+- **8 Categories**: Floral, Fresh, Oriental, Woody, Citrus, Spicy, Gourmand, Aquatic
+- **4 Brands**: Kici Signature, Maison Lumière, Essence Royale, Urban Scents
+- **15 Fragrance Notes**: Complete collection of top, heart, and base notes
+- **5 Products**: Diverse perfume collection with detailed descriptions
+- **2 Users**: Admin and sample customer accounts
 
-## 🎨 UI/UX Features
+## 🔧 Configuration
 
-- **Responsive Design**: Mobile-first approach
-- **Modern Animations**: Smooth transitions and hover effects
-- **Loading States**: User feedback during operations
-- **Error Handling**: User-friendly error messages
-- **Search & Filter**: Advanced product filtering
-- **Shopping Cart**: Persistent cart with quantity management
+### Environment Variables
+Create a `.env` file in the backend directory:
+
+```env
+# Database
+DATABASE_PATH=./database/kici_perfume.sqlite
+
+# JWT
+JWT_SECRET=your-super-secret-jwt-key
+
+# Server
+PORT=5000
+NODE_ENV=development
+
+# CORS
+CORS_ORIGIN=http://localhost:5173
+```
+
+### Database Reset
+To reset the database with fresh sample data:
+```bash
+cd backend
+npm run reset-db
+```
 
 ## 🚀 Deployment
 
-### Frontend Deployment
-The frontend is built with Vite and can be deployed to:
-- Vercel
-- Netlify
-- GitHub Pages
-- Any static hosting service
-
+### Production Build
 ```bash
-pnpm run build
-# Deploy the 'dist' folder
+# Build frontend
+npm run build
+
+# Build admin panel
+cd admin-panel
+npm run build
+
+# Start production server
+cd ../backend
+npm start
 ```
 
-### Backend Deployment
-The backend can be deployed to:
-- Heroku
-- Railway
-- DigitalOcean
-- AWS EC2
-
-Environment variables needed:
-- `MONGODB_URI`
-- `JWT_SECRET`
-- `NODE_ENV=production`
-- `CORS_ORIGIN` (your frontend URL)
+### Database Migration
+For production, update the database configuration in `backend/config/database.js` to use PostgreSQL or MySQL instead of SQLite.
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
 ## 📝 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
+## 🙏 Acknowledgments
 
-For support, email support@kici.com or create an issue in the repository.
+- **Fragrance Community** - For inspiration and expertise
+- **Open Source Libraries** - For making this project possible
+- **Contributors** - For their valuable contributions
+
+## 📞 Support
+
+For support, email support@kici-perfume.com or create an issue on GitHub.
 
 ---
 
-**Built with ❤️ by the Kici Perfume Team**
+**Made with ❤️ for perfume enthusiasts worldwide**
