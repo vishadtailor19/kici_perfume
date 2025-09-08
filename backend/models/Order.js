@@ -29,24 +29,28 @@ const Order = sequelize.define('Order', {
     defaultValue: 'pending'
   },
   payment_method: {
-    type: DataTypes.ENUM('credit_card', 'debit_card', 'paypal', 'stripe', 'apple_pay', 'google_pay', 'bank_transfer'),
+    type: DataTypes.ENUM('credit_card', 'debit_card', 'paypal', 'stripe', 'apple_pay', 'google_pay', 'bank_transfer', 'cash_on_delivery'),
     allowNull: false
   },
   payment_transaction_id: {
     type: DataTypes.STRING(100)
   },
-  subtotal: {
+  payment_intent_id: {
+    type: DataTypes.STRING(100),
+    allowNull: true
+  },
+  subtotal_amount: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
     validate: {
-      min: { args: 0, msg: 'Subtotal cannot be negative' }
+      min: 0
     }
   },
   tax_amount: {
     type: DataTypes.DECIMAL(10, 2),
     defaultValue: 0
   },
-  shipping_amount: {
+  shipping_cost: {
     type: DataTypes.DECIMAL(10, 2),
     defaultValue: 0
   },
@@ -58,7 +62,7 @@ const Order = sequelize.define('Order', {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
     validate: {
-      min: { args: 0, msg: 'Total amount cannot be negative' }
+      min: 0
     }
   },
   currency: {
@@ -108,14 +112,14 @@ const Order = sequelize.define('Order', {
   delivered_at: {
     type: DataTypes.DATE
   },
-  cancelled_at: {
-    type: DataTypes.DATE
+  notes: {
+    type: DataTypes.TEXT
   },
   cancellation_reason: {
     type: DataTypes.TEXT
   },
-  notes: {
-    type: DataTypes.TEXT
+  cancelled_at: {
+    type: DataTypes.DATE
   },
   internal_notes: {
     type: DataTypes.TEXT,

@@ -15,80 +15,59 @@ const Address = sequelize.define('Address', {
       key: 'id'
     }
   },
-  type: {
-    type: DataTypes.ENUM('billing', 'shipping', 'both'),
-    defaultValue: 'shipping'
-  },
   first_name: {
     type: DataTypes.STRING(50),
-    allowNull: false,
-    validate: {
-      notEmpty: { msg: 'First name is required' }
-    }
+    allowNull: false
   },
   last_name: {
     type: DataTypes.STRING(50),
-    allowNull: false,
-    validate: {
-      notEmpty: { msg: 'Last name is required' }
-    }
+    allowNull: false
   },
   company: {
-    type: DataTypes.STRING(100)
+    type: DataTypes.STRING(100),
+    allowNull: true
+  },
+  type: {
+    type: DataTypes.STRING(20),
+    allowNull: true
   },
   address_line_1: {
     type: DataTypes.STRING(100),
-    allowNull: false,
-    validate: {
-      notEmpty: { msg: 'Address line 1 is required' }
-    }
+    allowNull: false
   },
   address_line_2: {
-    type: DataTypes.STRING(100)
+    type: DataTypes.STRING(100),
+    allowNull: true
   },
   city: {
     type: DataTypes.STRING(50),
-    allowNull: false,
-    validate: {
-      notEmpty: { msg: 'City is required' }
-    }
+    allowNull: false
   },
   state: {
     type: DataTypes.STRING(50),
-    allowNull: false,
-    validate: {
-      notEmpty: { msg: 'State is required' }
-    }
+    allowNull: false
   },
   postal_code: {
     type: DataTypes.STRING(20),
-    allowNull: false,
-    validate: {
-      notEmpty: { msg: 'Postal code is required' }
-    }
+    allowNull: false
   },
   country: {
     type: DataTypes.STRING(50),
     allowNull: false,
-    defaultValue: 'United States',
-    validate: {
-      notEmpty: { msg: 'Country is required' }
-    }
+    defaultValue: 'India'
   },
   phone: {
     type: DataTypes.STRING(20),
-    validate: {
-      is: { args: /^\+?[\d\s-()]+$/, msg: 'Please enter a valid phone number' }
-    }
+    allowNull: true
+  },
+  is_active: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
   },
   is_default: {
     type: DataTypes.BOOLEAN,
     defaultValue: false
   },
-  is_active: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: true
-  }
 }, {
   tableName: 'addresses',
   timestamps: true,

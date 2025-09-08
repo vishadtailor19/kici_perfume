@@ -42,8 +42,14 @@ const User = sequelize.define('User', {
   },
   phone: {
     type: DataTypes.STRING(20),
+    allowNull: false,
     validate: {
-      is: { args: /^\+?[\d\s-()]+$/, msg: 'Please enter a valid phone number' }
+      notEmpty: { msg: 'Phone number is required' },
+      is: { 
+        args: /^[6-9]\d{9}$/, 
+        msg: 'Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9' 
+      },
+      len: { args: [10, 10], msg: 'Phone number must be exactly 10 digits' }
     }
   },
   date_of_birth: {

@@ -51,7 +51,7 @@ const Product = sequelize.define('Product', {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
     validate: {
-      min: { args: 0, msg: 'Price cannot be negative' }
+      min: { args: [0], msg: 'Price cannot be negative' }
     }
   },
   compare_price: {
@@ -67,7 +67,7 @@ const Product = sequelize.define('Product', {
     allowNull: false,
     defaultValue: 0,
     validate: {
-      min: { args: 0, msg: 'Stock cannot be negative' }
+      min: { args: [0], msg: 'Stock cannot be negative' }
     }
   },
   low_stock_threshold: {

@@ -27,14 +27,14 @@ const OrderItem = sequelize.define('OrderItem', {
     type: DataTypes.INTEGER,
     allowNull: false,
     validate: {
-      min: { args: 1, msg: 'Quantity must be at least 1' }
+      min: 1
     }
   },
   unit_price: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
     validate: {
-      min: { args: 0, msg: 'Unit price cannot be negative' }
+      min: 0
     }
   },
   total_price: {

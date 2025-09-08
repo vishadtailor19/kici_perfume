@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Test</title>
+</head>
+<body>
+    <h1>Testing Image Display</h1>
+    
+    <h2>Direct Image Access Test:</h2>
+    <div>
+        <p>Testing: /uploads/products/1-1757230296257-559138761.jpeg</p>
+        <img src="http://localhost:5000/uploads/products/1-1757230296257-559138761.jpeg" 
+             alt="Test Image 1" 
+             style="width: 100px; height: 100px; border: 1px solid red;"
+             onload="console.log('Image 1 loaded successfully')"
+             onerror="console.log('Image 1 failed to load')">
+    </div>
+    
+    <div>
+        <p>Testing: /uploads/products/images (1)-1757229764894-735623573.jpeg</p>
+        <img src="http://localhost:5000/uploads/products/images%20%281%29-1757229764894-735623573.jpeg" 
+             alt="Test Image 2" 
+             style="width: 100px; height: 100px; border: 1px solid blue;"
+             onload="console.log('Image 2 loaded successfully')"
+             onerror="console.log('Image 2 failed to load')">
+    </div>
+
+    <h2>Admin Panel Products Test:</h2>
+    <div id="products"></div>
+
+    <script>
+        console.log('Starting image tests...');
+        
+        // Test admin login and fetch products
+        async function testProducts() {
+            try {
+                console.log('1. Logging in...');
+                const loginResponse = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'admin@example.com',
+                        password: 'admin123'
+                    })
+                });
+                
+                if (!loginResponse.ok) {
+                    console.error('Login failed:', loginResponse.status);
+                    return;
+                }
+                
+                const loginData = await loginResponse.json();
+                console.log('2. Login successful, token:', loginData.token ? 'received' : 'missing');
+                
+                console.log('3. Fetching products...');
+                const productsResponse = await fetch('http://localhost:5000/api/admin/products?limit=5', {
+                    headers: {
+                        'Authorization': `Bearer ${loginData.token}`
+                    }
+                });
+                
+                if (!productsResponse.ok) {
+                    console.error('Products fetch failed:', productsResponse.status);
+                    return;
+                }
+                
+                const productsData = await productsResponse.json();
+                console.log('4. Products data:', productsData);
+                
+                const productsDiv = document.getElementById('products');
+                productsDiv.innerHTML = '<h3>Products from API:</h3>';
+                
+                if (productsData.products && productsData.products.length > 0) {
+                    productsData.products.forEach(product => {
+                        const productDiv = document.createElement('div');
+                        productDiv.style.border = '1px solid #ccc';
+                        productDiv.style.margin = '10px';
+                        productDiv.style.padding = '10px';
+                        
+                        productDiv.innerHTML = `
+                            <h4>${product.name} (ID: ${product.id})</h4>
+                            <p>Image URL: ${product.image_url || 'NULL'}</p>
+                            ${product.image_url ? `
+                                <img src="http://localhost:5000${product.image_url}" 
+                                     alt="${product.name}" 
+                                     style="width: 50px; height: 50px; border: 1px solid green;"
+                                     onload="console.log('Product image loaded: ${product.name}')"
+                                     onerror="console.log('Product image failed: ${product.name}')">
+                            ` : '<p style="color: red;">No image URL</p>'}
+                        `;
+                        
+                        productsDiv.appendChild(productDiv);
+                    });
+                } else {
+                    productsDiv.innerHTML += '<p>No products found</p>';
+                }
+                
+            } catch (error) {
+                console.error('Test failed:', error);
+            }
+        }
+        
+        // Wait a bit then run the test
+        setTimeout(testProducts, 2000);
+    </script>
+</body>
+</html>
+

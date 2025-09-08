@@ -17,7 +17,12 @@ const generateToken = (userId) => {
 router.post('/register', [
   body('name').trim().isLength({ min: 2, max: 50 }).withMessage('Name must be between 2 and 50 characters'),
   body('email').isEmail().normalizeEmail().withMessage('Please enter a valid email'),
-  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  body('phone')
+    .matches(/^[6-9]\d{9}$/)
+    .withMessage('Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9')
+    .isLength({ min: 10, max: 10 })
+    .withMessage('Phone number must be exactly 10 digits')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -28,26 +33,37 @@ router.post('/register', [
       });
     }
 
-    const { name, email, password } = req.body;
+    const { name, email, password, phone } = req.body;
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
+    // Check if user already exists with email or phone
+    const existingUser = await User.findOne({ 
+      where: { 
+        $or: [
+          { email },
+          { phone }
+        ]
+      } 
+    });
     if (existingUser) {
-      return res.status(400).json({ message: 'User already exists with this email' });
+      if (existingUser.email === email) {
+        return res.status(400).json({ message: 'User already exists with this email' });
+      }
+      if (existingUser.phone === phone) {
+        return res.status(400).json({ message: 'User already exists with this phone number' });
+      }
     }
 
     // Create new user
-    const user = new User({ name, email, password });
-    await user.save();
+    const user = await User.create({ name, email, password, phone });
 
     // Generate token
-    const token = generateToken(user._id);
+    const token = generateToken(user.id);
 
     res.status(201).json({
       message: 'User registered successfully',
       token,
       user: {
-        id: user._id,
+        id: user.id,
         name: user.name,
         email: user.email,
         role: user.role
@@ -78,8 +94,8 @@ router.post('/login', [
     const { email, password } = req.body;
 
     // Find user and include password for comparison
-    const user = await User.findOne({ email }).select('+password');
-    if (!user || !user.isActive) {
+    const user = await User.findOne({ where: { email }, attributes: { include: ['password'] } });
+    if (!user || !user.is_active) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
@@ -90,13 +106,13 @@ router.post('/login', [
     }
 
     // Generate token
-    const token = generateToken(user._id);
+    const token = generateToken(user.id);
 
     res.json({
       message: 'Login successful',
       token,
       user: {
-        id: user._id,
+        id: user.id,
         name: user.name,
         email: user.email,
         role: user.role
@@ -152,22 +168,22 @@ router.put('/profile', authenticateToken, [
 
     const { name, phone, address } = req.body;
 
-    const user = await User.findById(req.user._id);
+    const user = await User.findByPk(req.user.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
     // Update fields
-    if (name) user.name = name;
-    if (phone) user.phone = phone;
-    if (address) user.address = { ...user.address, ...address };
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (phone) updateData.phone = phone;
 
-    await user.save();
+    await user.update(updateData);
 
     res.json({
       message: 'Profile updated successfully',
       user: {
-        id: user._id,
+        id: user.id,
         name: user.name,
         email: user.email,
         role: user.role,

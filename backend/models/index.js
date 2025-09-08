@@ -14,6 +14,7 @@ const Wishlist = require('./Wishlist');
 const ProductImage = require('./ProductImage');
 const Coupon = require('./Coupon');
 const Address = require('./Address');
+const Contact = require('./Contact');
 
 // Define associations
 const defineAssociations = () => {
@@ -128,5 +129,6 @@ module.exports = {
   ProductImage,
   Coupon,
   Address,
+  Contact,
   syncDatabase
 };

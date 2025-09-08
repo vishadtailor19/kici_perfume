@@ -1,10 +1,36 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApp } from '../App';
 
 const ProductDetailPage = () => {
-  const { selectedProduct, setCurrentPage, addToCart } = useApp();
+  const { selectedProduct, setCurrentPage, addToCart, apiCall } = useApp();
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [productDetails, setProductDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Fetch detailed product information
+  useEffect(() => {
+    const fetchProductDetails = async () => {
+      if (!selectedProduct?.id) return;
+      
+      try {
+        setLoading(true);
+        setError('');
+        const data = await apiCall(`/products/${selectedProduct.id}`);
+        setProductDetails(data);
+      } catch (error) {
+        console.error('Failed to fetch product details:', error);
+        setError('Failed to load product details');
+        // Fallback to selectedProduct data
+        setProductDetails(selectedProduct);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProductDetails();
+  }, [selectedProduct, apiCall]);
 
   if (!selectedProduct) {
     return (
@@ -20,6 +46,52 @@ const ProductDetailPage = () => {
     );
   }
 
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="animate-pulse">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div className="space-y-4">
+              <div className="aspect-square bg-gray-300 rounded-2xl"></div>
+              <div className="flex space-x-4">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="w-20 h-20 bg-gray-300 rounded-lg"></div>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-6">
+              <div className="h-8 bg-gray-300 rounded w-3/4"></div>
+              <div className="h-6 bg-gray-300 rounded w-1/2"></div>
+              <div className="h-6 bg-gray-300 rounded w-1/4"></div>
+              <div className="space-y-2">
+                <div className="h-4 bg-gray-300 rounded"></div>
+                <div className="h-4 bg-gray-300 rounded"></div>
+                <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-8 text-center">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Error Loading Product</h2>
+        <p className="text-gray-600 mb-4">{error}</p>
+        <button
+          onClick={() => setCurrentPage('products')}
+          className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+        >
+          Back to Products
+        </button>
+      </div>
+    );
+  }
+
+  const product = productDetails || selectedProduct;
+
   const handleAddToCart = () => {
     addToCart(selectedProduct, quantity);
     // Show success message or redirect to cart
@@ -28,17 +100,19 @@ const ProductDetailPage = () => {
 
   const handleQuantityChange = (change) => {
     const newQuantity = quantity + change;
-    if (newQuantity >= 1 && newQuantity <= selectedProduct.stock) {
+    if (newQuantity >= 1 && newQuantity <= product.stock_quantity) {
       setQuantity(newQuantity);
     }
   };
 
-  // Mock additional images for demo
-  const productImages = [
-    selectedProduct.image,
-    selectedProduct.image,
-    selectedProduct.image
-  ];
+  // Get product images or use fallback
+  const productImages = product.images?.length > 0 
+    ? product.images.map(img => img.url)
+    : [
+        product.image || 'https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&h=400&fit=crop',
+        'https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&h=400&fit=crop',
+        'https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&h=400&fit=crop'
+      ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -59,7 +133,7 @@ const ProductDetailPage = () => {
             Products
           </button>
           <span>/</span>
-          <span className="text-gray-900">{selectedProduct.name}</span>
+          <span className="text-gray-900">{product.name}</span>
         </div>
       </nav>
 
@@ -87,7 +161,7 @@ const ProductDetailPage = () => {
               >
                 <img
                   src={image}
-                  alt={`${selectedProduct.name} ${index + 1}`}
+                  alt={`${product.name} ${index + 1}`}
                   className="w-full h-full object-cover"
                 />
               </button>
@@ -99,26 +173,26 @@ const ProductDetailPage = () => {
         <div className="space-y-6">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-              {selectedProduct.name}
+              {product.name}
             </h1>
             <p className="text-lg text-gray-600 mb-4">
-              {selectedProduct.brand} • {selectedProduct.category}
+              {product.brand?.name} • {product.category?.name}
             </p>
             <div className="flex items-center space-x-4 mb-6">
               <span className="text-3xl font-bold text-purple-600">
-                ${selectedProduct.price}
+                Rs.{product.price}
               </span>
               <span className={`text-sm px-3 py-1 rounded-full ${
-                selectedProduct.stock > 10 
+                product.stock_quantity > 10 
                   ? 'bg-green-100 text-green-800' 
-                  : selectedProduct.stock > 0 
+                  : product.stock_quantity > 0 
                     ? 'bg-yellow-100 text-yellow-800' 
                     : 'bg-red-100 text-red-800'
               }`}>
-                {selectedProduct.stock > 10 
+                {product.stock_quantity > 10 
                   ? 'In Stock' 
-                  : selectedProduct.stock > 0 
-                    ? `Only ${selectedProduct.stock} left` 
+                  : product.stock_quantity > 0 
+                    ? `Only ${product.stock_quantity} left` 
                     : 'Out of Stock'
                 }
               </span>
@@ -129,7 +203,7 @@ const ProductDetailPage = () => {
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-3">Description</h3>
             <p className="text-gray-600 leading-relaxed">
-              {selectedProduct.description}
+              {product.description}
             </p>
           </div>
 
@@ -169,7 +243,7 @@ const ProductDetailPage = () => {
                 <span className="text-lg font-medium w-12 text-center">{quantity}</span>
                 <button
                   onClick={() => handleQuantityChange(1)}
-                  disabled={quantity >= selectedProduct.stock}
+                  disabled={quantity >= product.stock_quantity}
                   className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   +
@@ -180,10 +254,10 @@ const ProductDetailPage = () => {
             <div className="flex space-x-4">
               <button
                 onClick={handleAddToCart}
-                disabled={selectedProduct.stock === 0}
+                disabled={product.stock_quantity === 0}
                 className="flex-1 bg-purple-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-purple-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
-                Add to Cart - ${(selectedProduct.price * quantity).toFixed(2)}
+                Add to Cart - Rs.{(product.price * quantity).toFixed(2)}
               </button>
               <button className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -200,7 +274,7 @@ const ProductDetailPage = () => {
                 <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-sm text-gray-600">Free shipping over $50</span>
+                <span className="text-sm text-gray-600">Free shipping over Rs.500</span>
               </div>
               <div className="flex items-center space-x-3">
                 <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
